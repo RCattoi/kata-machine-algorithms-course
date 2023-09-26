@@ -36,7 +36,6 @@ for (let i=0; i<dir.length; i++){
     return true
   }
 
-
 }
 
   path.pop()
