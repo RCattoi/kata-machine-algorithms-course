@@ -4,9 +4,9 @@ type Node<T> = {
   next?: Node<T>;
 }
 export default class DoublyLinkedList<T> {
-    public length: number;
-    private head?: Node<T>;
-    private tail?: Node<T>;
+  public length: number;
+  private head?: Node<T>;
+  private tail?: Node<T>;
     
     
 
@@ -41,20 +41,15 @@ export default class DoublyLinkedList<T> {
         return
       }
       this.length++
-      let curr = this.head;
-      for (let i = 0; curr && i < idx; ++i){
-        curr = curr.next
-      }
+      const curr = this.getAt(idx) as Node<T>;
+      const node ={value: item} as Node<T>
       
-      curr = curr as Node<T>
-      const node = { value: item } as Node<T>;
-
       node.next = curr
       node.prev = curr.prev
-
-      node.prev = node
-      if( curr.prev ) {
-        curr.prev.next = curr
+      curr.prev = node
+      
+      if( node.prev ) {
+        node.prev.next = node
       }
 
     }
@@ -72,25 +67,64 @@ export default class DoublyLinkedList<T> {
       this.tail = node;
     }
     remove(item: T): T | undefined {
-      if ( this.length === 0 ){
-        throw new Error('Lista vazia')
-      }
       let curr = this.head
       for (let i = 0; curr && i < this.length; ++i) { 
-        if (curr.value =item) {
+        if (curr.value === item) {
           break;
         }
         curr = curr.next
         } 
-        if (!curr){
-          return
-        }
-        return
+      if (!curr){
+        return undefined
+      }
+      return this.removeNode(curr)
 }
     get(idx: number): T | undefined {
-      return
+      return this.getAt(idx)?.value
 }
     removeAt(idx: number): T | undefined {
-      return
-}
+      const node = this.getAt(idx);
+
+      if (!node) {
+        return undefined;
+      }
+      return this.removeNode(node)
+
+    }
+  
+    private getAt(idx: number): Node<T> | undefined {
+      let curr = this.head;
+
+      for (let i = 0; curr && i < idx; ++i) {
+        curr = curr.next
+      }
+
+      return curr
+    }
+    private removeNode(node: Node<T>): T | undefined {
+      this.length--;
+
+      if (this.length === 0) {
+        const out = this.head?.value;
+        this.tail = this.head = undefined;
+        return out;
+      }
+    
+      if (node.prev) {
+        node.prev.next = node.next;
+      }
+      if (node.next) {
+        node.next.prev = node.prev;
+      }
+    
+      if (node === this.head) {
+        this.head = node.next;
+      }
+      if (node === this.tail) {
+        this.tail = node.prev;
+      }
+    
+      node.next = node.prev = undefined;
+      return node.value;
+    }
 }
